@@ -1,80 +1,88 @@
+# typing speed test gui
+
 # importing all libraries 
 from tkinter import *
 from timeit import default_timer as timer 
 import random 
 
-# creating window using gui 
-window = Tk() 
+# creating a list of words
+words = ['aardvark', 'baboon', 'camel']
 
-# the size of the window is defined 
-window.geometry("450x200") 
+# creating a function to get a random word
+def get_word():
+    word = random.choice(words)
+    return word
 
-x = 0
+# creating a function to get the time
+def get_time():
+    time = timer()
+    return time
 
-# defining the function for the test 
-def game(): 
-    global x 
+# creating a function to calculate the typing speed
+def calculate_speed():
+    global start_time
+    global end_time
+    global speed
+    end_time = get_time()
+    speed = round((len(word) / (end_time - start_time)), 2)
+    return speed
 
-    # loop for destroying the window 
-    # after on test 
-    if x == 0: 
-        window.destroy() 
-        x = x+1
+# creating a function to display the speed
+def display_speed():
+    global speed
+    speed_label.config(text = str(speed) + " words per minute")
 
-    # defining function for results of test 
-    def check_result(): 
-        if entry.get() == words[word]: 
+# creating a function to start the game
+def start_game():
+    global start_time
+    global word
+    word = get_word()
+    start_time = get_time()
+    word_label.config(text = word)
 
-            # here start time is when the window 
-            # is opened and end time is when 
-            # window is destroyed 
-            end = timer() 
+# creating a function to end the game
+def end_game():
+    global speed
+    calculate_speed()
+    display_speed()
 
-            # we deduct the start time from end 
-            # time and calculate results using 
-            # timeit function 
-            print(end-start) 
-        else: 
-            print("Wrong Input") 
+# creating a function to reset the game
+def reset_game():
+    global start_time
+    global end_time
+    global speed
+    global word
+    start_time = 0
+    end_time = 0
+    speed = 0
+    word = ""
+    word_label.config(text = word)
+    speed_label.config(text = speed)
 
-    words = ['programming', 'coding', 'algorithm', 
-            'systems', 'python', 'software'] 
+# creating a window
+window = Tk()
+window.title("Mist")
+window.geometry("400x400")
 
-    # Give random words for testing the speed of user 
-    word = random.randint(0, (len(words)-1)) 
+# creating a label for the word
+word_label = Label(window, text = "", font = ("Arial", 30))
+word_label.pack(pady = 20)
 
-    # start timer using timeit function 
-    start = timer() 
-    windows = Tk() 
-    windows.geometry("450x200") 
+# creating a button to start the game
+start_button = Button(window, text = "Start", command = start_game)
+start_button.pack(pady = 10)
 
-    # use lable method of tkinter for labling in window 
-    x2 = Label(windows, text=words[word], font="times 20") 
+# creating a button to end the game
+end_button = Button(window, text = "End", command = end_game)
+end_button.pack(pady = 10)
 
-    # place of labling in window 
-    x2.place(x=150, y=10) 
-    x3 = Label(windows, text="Start Typing", font="times 20") 
-    x3.place(x=10, y=50) 
+# creating a button to reset the game
+reset_button = Button(window, text = "Reset", command = reset_game)
+reset_button.pack(pady = 10)
 
-    entry = Entry(windows) 
-    entry.place(x=280, y=55) 
+# creating a label for the speed
+speed_label = Label(window, text = "", font = ("Arial", 30))
+speed_label.pack(pady = 20)
 
-    # buttons to submit output and check results 
-    b2 = Button(windows, text="Done", 
-                command=check_result, width=12, bg='grey') 
-    b2.place(x=150, y=100) 
-
-    b3 = Button(windows, text="Try Again", 
-                command=game, width=12, bg='grey') 
-    b3.place(x=250, y=100) 
-    windows.mainloop() 
-
-
-x1 = Label(window, text="Lets start playing..", font="times 20") 
-x1.place(x=10, y=50) 
-
-b1 = Button(window, text="Go", command=game, width=12, bg='grey') 
-b1.place(x=150, y=100) 
-
-# calling window 
-window.mainloop() 
+# running the mainloop
+window.mainloop()
